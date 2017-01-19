@@ -9,10 +9,14 @@
 #include <QString>
 #include <QFileDialog>
 #include <QWidget>
+#include <QMessageBox>
+
+#include "getfilecontroller.h"
 
 namespace Ui {
 class MainWindow;
 }
+
 
 class MainWindow : public QMainWindow
 {
@@ -24,14 +28,19 @@ public:
 
 private slots:
     void on_getEmployeeFileButton_clicked();
+    void on_getSuperFileButton_clicked();
+    void on_spinQuarter_editingFinished();
+    void on_spinFY_editingFinished();
 
 private:
     Ui::MainWindow *ui;
-    ifstream *employeeFilePtr;
-    ifstream *myobSuperFilePtr;
-    ofstream *contributionFilePtr;
-    ofstream *memberFilePtr;
-    ofstream *terminatedMemberFilePtr;
+    std::ifstream *employeeFilePtr;
+    std::ifstream *myobSuperFilePtr;
+    std::ofstream *contributionFilePtr;
+    std::ofstream *memberFilePtr;
+    std::ofstream *terminatedMemberFilePtr;
+    uint8_t financialYear;
+    uint8_t quarter;
 };
 
 #endif // MAINWINDOW_H
