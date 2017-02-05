@@ -2,20 +2,21 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QFile>
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
+#include <string>
 #include <QString>
 #include <QFileDialog>
 #include <QWidget>
 #include <QMessageBox>
 
-#include "outputfilecontroller.h"
-#include "datafilecontroller.h"
-#include "dataformatcontroller.h"
-
+#include "getfilecontroller.h"
 
 namespace Ui {
 class MainWindow;
 }
+
 
 class MainWindow : public QMainWindow
 {
@@ -30,20 +31,16 @@ private slots:
     void on_getSuperFileButton_clicked();
     void on_spinQuarter_editingFinished();
     void on_spinFY_editingFinished();
-    void on_writeContributionFileButton_clicked();
-    void on_writeMemberFileButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QFile *employeeFilePtr;
-    QFile *myobSuperFilePtr;
-    QFile *contributionFilePtr;
-    QFile *memberFilePtr;
-    QFile *terminatedMemberFilePtr;
+    std::ifstream *employeeFilePtr;
+    std::ifstream *myobSuperFilePtr;
+    std::ofstream *contributionFilePtr;
+    std::ofstream *memberFilePtr;
+    std::ofstream *terminatedMemberFilePtr;
     uint8_t financialYear;
     uint8_t quarter;
-
-    bool checkInputFilesPresent();
 };
 
 #endif // MAINWINDOW_H
