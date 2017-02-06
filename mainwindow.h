@@ -14,7 +14,7 @@
 #include "dataformatcontroller.h"
 
 =======
-#include "inputfilecontroller.h"
+#include "filecontroller.h"
 >>>>>>> Issue2
 
 namespace Ui {
