@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QMessageBox>
 
-#include "getfilecontroller.h"
+#include "inputfilecontroller.h"
 
 namespace Ui {
 class MainWindow;
