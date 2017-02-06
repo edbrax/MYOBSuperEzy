@@ -1,4 +1,4 @@
-#include "inputfilecontroller.h"
+#include "filecontroller.h"
 
 
 GetFileController::GetFileController(QObject *parent) : QObject(parent)

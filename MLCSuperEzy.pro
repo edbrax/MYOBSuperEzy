@@ -17,14 +17,14 @@ SOURCES += main.cpp\
     dataformatcontroller.cpp \
     outputfilecontroller.cpp \
     datafilecontroller.cpp \
-    inputfilecontroller.cpp \
-    dataformatter.cpp
+    dataformatter.cpp \
+    filecontroller.cpp
 
 HEADERS  += mainwindow.h \
     dataformatcontroller.h \
     outputfilecontroller.h \
     datafilecontroller.h \
-    inputfilecontroller.h \
-    dataformatter.h
+    dataformatter.h \
+    filecontroller.h
 
 FORMS    += mainwindow.ui
