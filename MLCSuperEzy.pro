@@ -14,9 +14,9 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    getfilecontroller.cpp
+    inputfilecontroller.cpp
 
 HEADERS  += mainwindow.h \
-    getfilecontroller.h
+    inputfilecontroller.h
 
 FORMS    += mainwindow.ui
