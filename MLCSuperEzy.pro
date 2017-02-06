@@ -15,6 +15,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
 <<<<<<< HEAD
+<<<<<<< HEAD
     dataformatcontroller.cpp \
     outputfilecontroller.cpp \
     datafilecontroller.cpp
@@ -29,5 +30,13 @@ HEADERS  += mainwindow.h \
 HEADERS  += mainwindow.h \
     inputfilecontroller.h
 >>>>>>> Issue2
+=======
+    inputfilecontroller.cpp \
+    dataformatter.cpp
+
+HEADERS  += mainwindow.h \
+    inputfilecontroller.h \
+    dataformatter.h
+>>>>>>> origin/master
 
 FORMS    += mainwindow.ui
