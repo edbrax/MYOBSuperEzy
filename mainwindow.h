@@ -8,10 +8,14 @@
 #include <QWidget>
 #include <QMessageBox>
 
+<<<<<<< HEAD
 #include "outputfilecontroller.h"
 #include "datafilecontroller.h"
 #include "dataformatcontroller.h"
 
+=======
+#include "inputfilecontroller.h"
+>>>>>>> Issue2
 
 namespace Ui {
 class MainWindow;
