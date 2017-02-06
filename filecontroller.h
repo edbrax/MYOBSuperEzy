@@ -5,19 +5,17 @@
 #include <QFileDialog>
 #include <QWidget>
 #include <QMessageBox>
-#include <iostream>
-#include <fstream>
+#include <QFile>
 #include <QString>
 
-class GetFileController : public QObject
+class FileController : public QWidget
 {
-
     Q_OBJECT
 
 public:
-    explicit GetFileController(QObject *parent = 0);
+    explicit FileController(QWidget *parent = nullptr);
 
-    static std::ifstream *getAFile(QString prompt);
+    QFile *openFile(QString prompt, QIODevice::OpenMode openMode);
 
 private:
     QWidget *parentptr;

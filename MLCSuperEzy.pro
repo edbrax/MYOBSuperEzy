@@ -14,17 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dataformatcontroller.cpp \
-    outputfilecontroller.cpp \
-    datafilecontroller.cpp \
-    dataformatter.cpp \
-    filecontroller.cpp
+    filecontroller.cpp \
+    dataformatter.cpp
 
 HEADERS  += mainwindow.h \
-    dataformatcontroller.h \
-    outputfilecontroller.h \
-    datafilecontroller.h \
-    dataformatter.h \
-    filecontroller.h
+    filecontroller.h \
+    dataformatter.h
 
 FORMS    += mainwindow.ui
