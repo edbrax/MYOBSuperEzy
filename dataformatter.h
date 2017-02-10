@@ -4,6 +4,11 @@
 #include <QObject>
 #include <QWidget>
 #include <QFile>
+#include <QTextStream>
+#include <QMap>
+#include <QStringList>
+#include <QDate>
+#include <QMessageBox>
 
 
 class DataFormatter : public QWidget
@@ -16,10 +21,9 @@ public:
     void setSuperannuationFile(QFile *filePtr);
     void setEmployeesFile(QFile * filePtr);
     void setDateDetails(int financialYear, int quarter);
-    /*
     void writeContributionsFile(QFile *filePtr);
     void writeMembersFile(QFile *filePtr);
-*/
+
 
 private:
     QWidget *parentptr;
@@ -27,6 +31,9 @@ private:
     QFile *myobSuperFilePtr;
     int financialYear;
     int quarter;
+
+    bool isUnderEighteen(QStringList employeeDetails);
+    QString getSurname(QString givenName, QString familyName);
 };
 
 #endif // DATAFORMATTER_H

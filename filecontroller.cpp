@@ -22,6 +22,8 @@ QFile *FileController::openFile(QString prompt, QIODevice::OpenMode openMode) {
 
      if(filePtr->fileName().isNull()) return nullptr;
 
+     filePtr->open(openMode);
+
      if(!filePtr->isOpen()){
          QMessageBox::warning(parentptr, QString("MLC SuperEzy Converter"), QString("%1 file not open.").arg(prompt));
          return nullptr;

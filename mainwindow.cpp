@@ -127,7 +127,7 @@ void MainWindow::outputFile(QFile *filePtr, QString prompt) {
                 prompt, QIODevice::WriteOnly);
 
     if(!filePtr) return;
-/*
+
     DataFormatter dataFormat(this);
     dataFormat.setEmployeesFile(employeeFilePtr);
     dataFormat.setDateDetails(financialYear, quarter);
@@ -139,7 +139,7 @@ void MainWindow::outputFile(QFile *filePtr, QString prompt) {
     } else {
         dataFormat.writeMembersFile(filePtr);
     }
-*/
+
     filePtr->flush();
     filePtr->close();
 }
