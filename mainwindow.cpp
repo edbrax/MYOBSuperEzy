@@ -55,39 +55,33 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_getEmployeeFileButton_clicked()
 {
-    DataFileController dataFile;
-    employeeFilePtr = dataFile.getAFile(QString("Open the EMPLOYEE file for this quarter"));
+    FileController dataFile(this);
+    employeeFilePtr = dataFile.openFile(QString("Open the EMPLOYEE file for this quarter"), QIODevice::ReadOnly);
+    if(!employeeFilePtr->isOpen()) return;
+    filesFlag |= 1;
+    ui->writeMemberFileButton->setEnabled(true);
+    ui->writeMemberFileButton->setEnabled(true);
 }
 
 void MainWindow::on_getSuperFileButton_clicked()
 {
-    DataFileController dataFile;
-    myobSuperFilePtr = dataFile.getAFile(QString("Open the SUPER file for this quarter"));
+    FileController dataFile(this);
+    myobSuperFilePtr = dataFile.openFile(QString("Open the SUPER file for this quarter"), QIODevice::ReadOnly);
+    if(!myobSuperFilePtr->isOpen()) return;
+    filesFlag |= 2;
+    if(filesFlag & 1)
+        ui->writeContributionFileButton->setEnabled(true);
 }
 
 
 void MainWindow::on_writeContributionFileButton_clicked()
 {
-    if(!checkInputFilesPresent()) {
-        return;
-    }
+    outputFile(contributionFilePtr, QString("Write the CONTRIBUTIONS file for this quarter"));
+}
 
-    OutputFileController writeFile(this);
-    contributionFilePtr = writeFile.outputFile(
-                QString("Write the CONTRIBUTIONS file for this quarter"));
-
-    if(!contributionFilePtr) return;
-
-    DataFormatController dataFormat(this);
-    dataFormat.setEmployeesFile(employeeFilePtr);
-    dataFormat.setContributionsFile(myobSuperFilePtr);
-    dataFormat.setDateDetails(financialYear, quarter);
-
-    // Write out the data file
-    dataFormat.writeContributionsFile(contributionFilePtr);
-
-    contributionFilePtr->flush();
-    contributionFilePtr->close();
+void MainWindow::on_writeMemberFileButton_clicked()
+{
+    outputFile(memberFilePtr, QString("Write the MEMBERS file for this quarter"));
 }
 
 void MainWindow::on_spinFY_editingFinished()
@@ -98,29 +92,6 @@ void MainWindow::on_spinFY_editingFinished()
 void MainWindow::on_spinQuarter_editingFinished()
 {
     quarter = static_cast<uint8_t>(ui->spinQuarter->value());
-}
-
-
-void MainWindow::on_writeMemberFileButton_clicked()
-{
-    if(!checkInputFilesPresent()) {
-        return;
-    }
-    OutputFileController writeFile(this);
-    memberFilePtr = writeFile.outputFile(
-                QString("Write the MEMBERS file for this quarter"));
-    if(!memberFilePtr) return;
-
-    // Initialize the data formatter
-    DataFormatController dataFormat(this);
-    dataFormat.setEmployeesFile(employeeFilePtr);
-    dataFormat.setDateDetails(financialYear, quarter);
-
-    // Write out the data file
-    dataFormat.writeMembersFile(memberFilePtr);
-
-    memberFilePtr->flush();
-    memberFilePtr->close();
 }
 
 bool MainWindow::checkInputFilesPresent() {
@@ -143,4 +114,32 @@ bool MainWindow::checkInputFilesPresent() {
         return false;
     }
     return true;
+}
+
+void MainWindow::outputFile(QFile *filePtr, QString prompt) {
+
+    if(!checkInputFilesPresent()) {
+        return;
+    }
+
+    FileController writeFile(this);
+    filePtr = writeFile.openFile(
+                prompt, QIODevice::WriteOnly);
+
+    if(!filePtr) return;
+
+    DataFormatter dataFormat(this);
+    dataFormat.setEmployeesFile(employeeFilePtr);
+    dataFormat.setDateDetails(financialYear, quarter);
+
+    // Write out the data file
+    if(prompt.contains("CONTRIBUTIONS")) {
+        dataFormat.setSuperannuationFile(myobSuperFilePtr);
+        dataFormat.writeContributionsFile(filePtr);
+    } else {
+        dataFormat.writeMembersFile(filePtr);
+    }
+
+    filePtr->flush();
+    filePtr->close();
 }

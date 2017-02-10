@@ -4,18 +4,12 @@
 #include <QMainWindow>
 #include <QFile>
 #include <QString>
-#include <QFileDialog>
 #include <QWidget>
 #include <QMessageBox>
+#include <QIODevice>
 
-<<<<<<< HEAD
-#include "outputfilecontroller.h"
-#include "datafilecontroller.h"
-#include "dataformatcontroller.h"
-
-=======
 #include "filecontroller.h"
->>>>>>> Issue2
+#include "dataformatter.h"
 
 namespace Ui {
 class MainWindow;
@@ -46,8 +40,10 @@ private:
     QFile *terminatedMemberFilePtr;
     uint8_t financialYear;
     uint8_t quarter;
+    uint8_t filesFlag;
 
     bool checkInputFilesPresent();
+    void outputFile(QFile *filePtr, QString prompt);
 };
 
 #endif // MAINWINDOW_H

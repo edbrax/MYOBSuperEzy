@@ -41,6 +41,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="writeContributionFileButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -54,6 +57,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="writeMemberFileButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -67,6 +73,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="writeTerminatedMembersFileButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>

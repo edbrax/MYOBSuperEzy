@@ -1,30 +1,33 @@
 #include "filecontroller.h"
 
 
-GetFileController::GetFileController(QObject *parent) : QObject(parent)
+FileController::FileController(QWidget *parent) : QWidget(parent), parentptr(parent)
 {
 
 }
 
 
-std::ifstream *GetFileController::getAFile(QString prompt) {
+QFile *FileController::openFile(QString prompt, QIODevice::OpenMode openMode) {
 
+    QFile *filePtr = new QFile(parentptr);
 
-    QString fileName = QFileDialog::getOpenFileName(nullptr, prompt);
+    if(openMode == QIODevice::ReadOnly)
+        filePtr->setFileName(QFileDialog::getOpenFileName(parentptr,
+                              QString("Select %1 file").arg(prompt),
+                               "/", "Text (*.txt)"));
+    else
+        filePtr->setFileName(QFileDialog::getSaveFileName(parentptr,
+                              QString("Select %1 file").arg(prompt),
+                               "/", "CSV (*.csv)"));
 
-     if(fileName.isNull()){
-         return nullptr;
-     }
+     if(filePtr->fileName().isNull()) return nullptr;
 
-     std::ifstream *filePtr = new std::ifstream(fileName.toLocal8Bit().constData());
+     filePtr->open(openMode);
 
-     if(filePtr->fail()){
-         QMessageBox::warning(nullptr, QString("MLC SuperEzy Converter"), QString("Failed to open the %1 file.").arg(fileName));
+     if(!filePtr->isOpen()){
+         QMessageBox::warning(parentptr, QString("MLC SuperEzy Converter"), QString("%1 file not open.").arg(prompt));
          return nullptr;
      }
 
      return filePtr;
 }
-
-
-
