@@ -34,6 +34,7 @@ private:
 
     bool isUnderEighteen(QStringList employeeDetails);
     QString getSurname(QString givenName, QString familyName);
+    QMap<QString, QString> *getEmployeeMap();
 };
 
 #endif // DATAFORMATTER_H

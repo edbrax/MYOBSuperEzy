@@ -27,7 +27,115 @@ void DataFormatter::setDateDetails(int financYear, int quartr){
 // MLC. This file gives SupererEzy details on Member Contributions
 // to be paid.
 void DataFormatter::writeContributionsFile(QFile *filePtr){
+    QTextStream contributionText(filePtr);
+    QTextStream contributionsStream(myobSuperFilePtr);
+    QStringList contributionsLine;
+    QString strFund, strName, strSGC;
+    QString strSalSacrificeAmount, strEmpAddAmount, strMemberVolAmount;
+    QMap<QString, QString> *employeeMap = getEmployeeMap();
+    int i;
 
+    // Output file headings (first line of CSV file).
+    contributionText << "Employee Name,Fund Code,Member Number,Payroll Number,"
+                     << "SGC Amount,Salary Sacrifice Amount,"
+            << "Employer Additional Amount,Member Voluntary Amount"
+            << endl << endl;
+
+    // Loop through MYOB file header lines
+    for(i = 0; i < 11; i++) {
+       contributionsStream.readLine();
+    }
+
+    // Loop through MYOB contributions .txt file. Note this file is NOT
+    // a neatly formatted flat data file.
+    contributionsLine = contributionsStream.readLine().split("\t");
+    while(!contributionsStream.atEnd()) {
+
+ //       QMessageBox::warning(this, QString("MLC SuperEzy Converter"),
+ //           QString("Got here!"));
+
+        if(contributionsLine.at(0).trimmed() == QString("Superannuation Fund:")) {
+
+            // First, get the fund name (second item at "Superannuation Fund:")
+            strFund = contributionsLine.at(1).trimmed();
+
+            // Next, go to next line
+            contributionsLine = contributionsStream.readLine().split("\t");
+
+            // Loop through MYOB contributions file
+            while(!contributionsStream.atEnd()) {
+
+                // If the current line is the next fund, leave this loop
+                if(contributionsLine.at(0).trimmed() ==
+                        QString("Superannuation Fund:")) break;
+
+                // If the current line is an employee name, process it.
+                // Only employee names have a comma in the first item.
+                if(contributionsLine.at(0).contains(",")) {
+
+                    // Some surnames are different, getSurname() is the fix
+                    strName = QString("%1, %2")
+                        .arg(getSurname(contributionsLine.at(0).split(",").at(1).trimmed(),
+                                        contributionsLine.at(0).split(",").at(0).trimmed()))
+                        .arg(contributionsLine.at(0).split(",").at(1).trimmed());
+
+                    // Initialize the amount strings to zero
+                    strSGC = strSalSacrificeAmount =
+                     strEmpAddAmount = strMemberVolAmount = QString("$0.00");
+
+                    // Get the next line
+                    contributionsLine = contributionsStream.readLine().split("\t");
+
+                    // loop until all amounts are captured
+                    if(contributionsLine.count() > 2) {
+                        while(contributionsLine.at(2).contains("$")) {
+
+                            // Record each applicable payment amount
+                            if(contributionsLine.at(1).trimmed() == QString("Salary Sacrifice"))
+                                strSalSacrificeAmount = QString("\"%1\"").arg(contributionsLine.at(2).trimmed());
+                            else if(contributionsLine.at(1).trimmed() == QString("Superannuation Guarantee"))
+                                strSGC = QString("\"%1\"").arg(contributionsLine.at(2).trimmed());
+                            else if(contributionsLine.at(1).trimmed() == QString("Employer Additional"))
+                                strEmpAddAmount = QString("\"%1\"").arg(contributionsLine.at(2).trimmed());
+                            else if(contributionsLine.at(1).trimmed() == QString("Employee Additional"))
+                                strMemberVolAmount = QString("\"%1\"").arg(contributionsLine.at(2).trimmed());
+
+                            // Get the next line
+                            contributionsLine = contributionsStream.readLine().split("\t");
+
+                            // end of contributions amount list if count < 3
+                            if(contributionsLine.count() < 3) break;
+
+                        } // end loop through amounts for this employee
+                    }
+
+                    // Write out the details
+                    contributionText << "\"" << strName << "\"" << "," << strFund << ","
+                            << employeeMap->value(strName).split(",").at(1).trimmed() << ","
+                            << employeeMap->value(strName).split(",").at(0).trimmed() << ","
+                            << strSGC << "," << strSalSacrificeAmount << ","
+                            << strEmpAddAmount << "," << strMemberVolAmount << endl;
+
+                } // end if the line found is an employee name
+
+                // After each employee details written out, go to next line
+                contributionsLine = contributionsStream.readLine().split("\t");
+
+            } //end loop through this Fund batch
+        } else { // end if line is "Superannuation Fund:"
+
+            // If in outer loop and line is NOT "Superannuation Fund:", get next line
+            contributionsLine = contributionsStream.readLine().split("\t");
+        }
+
+    } // end loop through entire file
+
+    delete employeeMap;
+
+    // The output file is flushed and closed by the calling function in MainWindow
+
+    QMessageBox::warning(this, QString("MLC SuperEzy Converter"),
+        QString("Contributions file completed."));
 }
 
 
@@ -37,7 +145,7 @@ void DataFormatter::writeContributionsFile(QFile *filePtr){
 void DataFormatter::writeMembersFile(QFile *filePtr){
     QTextStream membersText(filePtr);
     QTextStream employeeDetailsStream(employeeFilePtr);
-    QStringList employeeDetailsLine = employeeDetailsStream.readLine().split("\t", QString::SkipEmptyParts);
+    QStringList employeeDetailsLine = employeeDetailsStream.readLine().split("\t");
     float hours;
 
     // Output file headings (first line of CSV file).
@@ -83,7 +191,6 @@ void DataFormatter::writeMembersFile(QFile *filePtr){
                         << (employeeDetailsLine.at(12).trimmed().length() > 0 ?
                             employeeDetailsLine.at(12).trimmed() : "Australia")
                         << ",";
-
 
         // Mobile Number
         membersText << (employeeDetailsLine.at(13).startsWith("04") ?
@@ -142,8 +249,10 @@ void DataFormatter::writeMembersFile(QFile *filePtr){
         else
             membersText << employeeDetailsLine.at(114).toInt() << endl;
 
-
     } // !employeeDetailsStream.atEnd()
+
+    // The output file is flushed and closed by the calling function in MainWindow
+
     QMessageBox::warning(this, QString("MLC SuperEzy Converter"),
         QString("Members file completed."));
 }
@@ -153,6 +262,8 @@ void DataFormatter::writeMembersFile(QFile *filePtr){
 bool DataFormatter::isUnderEighteen(QStringList employeeDetails){
 
     QDate eoqDate;
+
+    // Get the employee's date of birth
     QString dobString = employeeDetails.at(109).trimmed();
     QDate dobDate(dobString.split("/").at(2).toInt(),
                   dobString.split("/").at(1).toInt(),
@@ -200,4 +311,27 @@ QString DataFormatter::getSurname(QString givenName, QString familyName) {
        return "Vega";
     else
        return familyName;
+}
+
+// Maps employee Payroll Number and Member Number using
+// Employee Name as key
+QMap<QString, QString> *DataFormatter::getEmployeeMap(){
+    QMap<QString, QString> *map = new QMap<QString, QString>();
+    QTextStream employeeDetailsStream(employeeFilePtr);
+    QStringList employeeDetailsLine = employeeDetailsStream.readLine().split("\t");
+
+    // Loop through MYOB employees .txt file to get each employee's data.
+    // Key is "MLC surname, firstname". Data is "PayrollNumber, MemberNumber".
+    while(!employeeDetailsStream.atEnd()) {
+        employeeDetailsLine = employeeDetailsStream.readLine().split("\t");
+
+        map->insert(QString("%1, %2")
+          .arg(getSurname(employeeDetailsLine.at(1).trimmed(),
+                          employeeDetailsLine.at(0).trimmed()))
+          .arg(employeeDetailsLine.at(1).trimmed()),
+                    QString("%1,%2")
+                    .arg(employeeDetailsLine.at(2).trimmed())
+                    .arg(employeeDetailsLine.at(119).trimmed()));
+    }
+    return map;
 }

@@ -143,3 +143,35 @@ void MainWindow::outputFile(QFile *filePtr, QString prompt) {
     filePtr->flush();
     filePtr->close();
 }
+
+
+// Runs a test on the system using the included files. Saves manual file selection
+void MainWindow::on_pushButton_clicked()
+{
+    QFile *contsOut = new QFile("C:/Users/LL/Documents/ACMG/SuperStream/FY2017/superContributionsFY17_Q3.csv");
+    contsOut->open(QIODevice::ReadWrite);
+
+    employeeFilePtr = new QFile("C:/Users/LL/Documents/ACMG/SuperStream/FY2017/FY17_Q3_Employee.txt");
+    myobSuperFilePtr = new QFile("C:/Users/LL/Documents/ACMG/SuperStream/FY2017/FY17_Q3_AccrualbyFundSummary.txt");
+
+    myobSuperFilePtr->open(QIODevice::ReadOnly);
+    employeeFilePtr->open(QIODevice::ReadOnly);
+
+        if(!myobSuperFilePtr->isOpen())  {
+            QMessageBox::warning(this, QString("MLC SuperEzy Converter"),
+            QString("Got here!"));
+            return;
+        }
+
+
+    DataFormatter dataFormat(this);
+    dataFormat.setEmployeesFile(employeeFilePtr);
+    dataFormat.setDateDetails(17, 3);
+
+    dataFormat.setSuperannuationFile(myobSuperFilePtr);
+    dataFormat.writeContributionsFile(contsOut);
+
+    contsOut->flush();
+    contsOut->close();
+
+}
